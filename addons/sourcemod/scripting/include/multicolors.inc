@@ -1044,24 +1044,28 @@ stock StringMap CInitColorTrie() {
 		SetTrieString(hTrie, "yellow", "\x07FFFF00");
 		SetTrieString(hTrie, "yellowgreen", "\x079ACD32");
 	} else {
-		SetTrieString(hTrie, "default", "\x01");       // "\x01" "{default}"
+		SetTrieString(hTrie, "default", "\x01");
 		SetTrieString(hTrie, "teamcolor", "\x03");     // "\x03" "{lightgreen}" "\x03" "{orange}" "\x03" "{blue}" "\x03" "{purple}"
 
-		SetTrieString(hTrie, "red", "\x07");           // "\x07" "{red}"
-		SetTrieString(hTrie, "lightred", "\x0F");      // "\x0F" "{lightred}"
-		SetTrieString(hTrie, "darkred", "\x02");       // "\x02" "{darkred}"
-		SetTrieString(hTrie, "bluegrey", "\x0A");      // "\x0A" "{lightblue}"
-		SetTrieString(hTrie, "blue", "\x0B");          // "\x0B" "{steelblue}"
-		SetTrieString(hTrie, "darkblue", "\x0C");      // "\x0C" "{darkblue}"
+		SetTrieString(hTrie, "darkred", "\x02");
 		SetTrieString(hTrie, "purple", "\x03");
-		SetTrieString(hTrie, "orchid", "\x0E");        // "\x0E" "{pink}"
-		SetTrieString(hTrie, "yellow", "\x09");        // "\x09" "{yellow}"
+		SetTrieString(hTrie, "green", "\x04");
+		SetTrieString(hTrie, "olive", "\x05");
+		SetTrieString(hTrie, "lightgreen", "\x05");
+		SetTrieString(hTrie, "lime", "\x06");
+		SetTrieString(hTrie, "lightred", "\x07");
+		SetTrieString(hTrie, "red", "\x07");
+		SetTrieString(hTrie, "grey", "\x08");
+		SetTrieString(hTrie, "yellow", "\x09");
 		SetTrieString(hTrie, "gold", "\x10");
-		SetTrieString(hTrie, "lightgreen", "\x05");    // "\x05" "{olive}"
-		SetTrieString(hTrie, "green", "\x04");         // "\x04" "{green}"
-		SetTrieString(hTrie, "lime", "\x06");          // "\x06" "{lime}"
-		SetTrieString(hTrie, "grey", "\x08");          // "\x08" "{grey}"
+		SetTrieString(hTrie, "orange", "\x10");
+		SetTrieString(hTrie, "bluegrey", "\x0A");
+		SetTrieString(hTrie, "blue", "\x0B");
+		SetTrieString(hTrie, "lightblue", "\x0B");
+		SetTrieString(hTrie, "darkblue", "\x0C");
 		SetTrieString(hTrie, "grey2", "\x0D");
+		SetTrieString(hTrie, "orchid", "\x0E");
+		SetTrieString(hTrie, "lightred2", "\x0F");
 	}
 
 	// SetTrieString(hTrie, "engine 1", "\x01");
