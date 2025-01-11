@@ -3,7 +3,7 @@
 #endif
 #define _multicolors_included
 
-#define MuCo_VERSION "2.2.0"
+#define MuCo_VERSION "2.2.1"
 
 #pragma newdecls required
 
@@ -715,7 +715,6 @@ stock int CShowActivity2(int client, const char[] tag, const char[] format, any 
 
 	char szTag[MAX_MESSAGE_LENGTH];
 	strcopy(szTag, sizeof(szTag), tag);
-	CRemoveTags(szTag, sizeof(szTag));
 
 	char szBuffer[MAX_MESSAGE_LENGTH];
 	//char szCMessage[MAX_MESSAGE_LENGTH];
@@ -750,6 +749,7 @@ stock int CShowActivity2(int client, const char[] tag, const char[] format, any 
 		SetGlobalTransTarget(LANG_SERVER);
 		VFormat(szBuffer, sizeof(szBuffer), format, 4);
 
+		CRemoveTags(szTag, sizeof(szTag));
 		CRemoveTags(szBuffer, sizeof(szBuffer));
 		PrintToServer("%s%s", szTag, szBuffer);
 	}
