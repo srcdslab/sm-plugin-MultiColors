@@ -12,8 +12,8 @@
 #define MORE_COLORS_VERSION     "3.0.0-MC"
 #define MC_MAX_MESSAGE_LENGTH   256
 #define MAX_BUFFER_LENGTH       (MC_MAX_MESSAGE_LENGTH * 4)
-#define MAX_COLOR_TAG_LENGTH 32
-#define COLOR_HASH_SIZE 256
+#define MAX_COLOR_TAG_LENGTH    32
+#define COLOR_HASH_SIZE         256
 
 #define MC_GAME_DODS           0
 
@@ -23,9 +23,6 @@ static char g_sColorKeys[COLOR_HASH_SIZE][32];
 static char g_sColorValues[COLOR_HASH_SIZE][16];
 static int g_iColorHash[COLOR_HASH_SIZE];
 static int g_iColorCount = 0;
-
-static char g_sOutputBuffer[MAX_BUFFER_LENGTH];
-static char g_sTempTag[32];
 
 static ConVar sm_show_activity;
 
@@ -267,6 +264,9 @@ stock void MC_ReplaceColorCodes(char[] buffer, int author = 0, bool removeTags =
 	int len = strlen(buffer);
 	int i = 0;
 
+	char sOutputBuffer[MAX_BUFFER_LENGTH];
+	char sTempTag[32];
+
 	while (i < len && outPos < maxlen - 16) {
 		if (buffer[i] == '{') {
 			int start = i + 1;
@@ -286,34 +286,34 @@ stock void MC_ReplaceColorCodes(char[] buffer, int author = 0, bool removeTags =
 				// Extract tag
 				int copyLen = (tagLen < 31) ? tagLen : 31;
 				for (int k = 0; k < copyLen; k++) {
-					g_sTempTag[k] = buffer[start + k];
+					sTempTag[k] = buffer[start + k];
 				}
-				g_sTempTag[copyLen] = '\0';
+				sTempTag[copyLen] = '\0';
 
-				MC_StrToLower(g_sTempTag);
+				MC_StrToLower(sTempTag);
 
 				char value[16];
 				bool found = false;
 
 				// Handle hex colors
-				if (g_sTempTag[0] == '#' && (tagLen == 7 || tagLen == 9)) {
+				if (sTempTag[0] == '#' && (tagLen == 7 || tagLen == 9)) {
 					if (tagLen == 7) {
 						value[0] = '\x07';
-						strcopy(value[1], 9, g_sTempTag[1]);
+						strcopy(value[1], 9, sTempTag[1]);
 					} else {
 						value[0] = '\x08';
-						strcopy(value[1], 9, g_sTempTag[1]);
+						strcopy(value[1], 9, sTempTag[1]);
 					}
 					found = true;
 				} else {
-					found = MC_FastGetColor(g_sTempTag, value, sizeof(value));
+					found = MC_FastGetColor(sTempTag, value, sizeof(value));
 				}
 
 				if (found && !removeTags) {
 					// Copy color code directly
 					int valLen = strlen(value);
 					for (int k = 0; k < valLen && outPos < maxlen - 1; k++) {
-						g_sOutputBuffer[outPos++] = value[k];
+						sOutputBuffer[outPos++] = value[k];
 					}
 					i = end + 1;
 					continue;
@@ -324,11 +324,11 @@ stock void MC_ReplaceColorCodes(char[] buffer, int author = 0, bool removeTags =
 			}
 		}
 
-		g_sOutputBuffer[outPos++] = buffer[i++];
+		sOutputBuffer[outPos++] = buffer[i++];
 	}
 
-	g_sOutputBuffer[outPos] = '\0';
-	strcopy(buffer, maxlen, g_sOutputBuffer);
+	sOutputBuffer[outPos] = '\0';
+	strcopy(buffer, maxlen, sOutputBuffer);
 }
 
 /**
