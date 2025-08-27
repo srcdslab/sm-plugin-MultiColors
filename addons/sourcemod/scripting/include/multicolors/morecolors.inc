@@ -801,12 +801,10 @@ stock bool CColorExists(const char[] color) {
 stock bool CGetTeamColor(int client, char[] value, int size) {
 	if (client <= 0 || client > MaxClients) {
 		ThrowError("Invalid client index %i", client);
-		return false;
 	}
 
 	if (!IsClientInGame(client)) {
 		ThrowError("Client %i is not in game", client);
-		return false;
 	}
 
 	MC_InitFastColors();
