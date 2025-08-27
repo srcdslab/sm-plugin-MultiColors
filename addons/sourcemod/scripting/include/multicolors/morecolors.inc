@@ -1072,7 +1072,7 @@ stock void MC_FastReplaceString(char[] text, int maxlen, const char[] search, co
 	if (textLen == 0)
 		return;
 
-	static char localBuffer[MAX_BUFFER_LENGTH];
+	char localBuffer[MAX_BUFFER_LENGTH];
 	int replaceLen = strlen(replace);
 	int tempPos = 0;
 	int i = 0;
