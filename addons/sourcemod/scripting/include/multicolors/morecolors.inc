@@ -1036,20 +1036,37 @@ stock void MC_FastSetColor(const char[] key, const char[] value) {
 		return;
 
 	int hash = MC_FastHash(key);
+	int originalHash = hash;
+	int probeCount = 0;
 
-	while (g_iColorHash[hash] > 0) {
-		int existingIndex = g_iColorHash[hash] - 1;
+	// Linear probing with cycle detection
+	do {
+		int existingIndex = g_iColorHash[hash];
+
+		// Found empty slot
+		if (existingIndex == 0) {
+			strcopy(g_sColorKeys[g_iColorCount], 32, key);
+			strcopy(g_sColorValues[g_iColorCount], 16, value);
+			g_iColorHash[hash] = g_iColorCount + 1;
+			g_iColorCount++;
+			return;
+		}
+
+		// Check if key already exists (update case)
+		existingIndex--;
 		if (strcmp(g_sColorKeys[existingIndex], key, false) == 0) {
 			strcopy(g_sColorValues[existingIndex], 16, value);
 			return;
 		}
-		hash = (hash + 1) & (COLOR_HASH_SIZE - 1);
-	}
 
-	strcopy(g_sColorKeys[g_iColorCount], 32, key);
-	strcopy(g_sColorValues[g_iColorCount], 16, value);
-	g_iColorHash[hash] = g_iColorCount + 1;
-	g_iColorCount++;
+		hash = (hash + 1) & (COLOR_HASH_SIZE - 1);
+		probeCount++;
+
+		// Prevent infinite loop if table is full
+		if (probeCount >= COLOR_HASH_SIZE) {
+			return; // Table is completely full, cannot insert
+		}
+	} while (hash != originalHash);
 }
 
 stock bool MC_FastGetColor(const char[] key, char[] output, int maxlen) {
