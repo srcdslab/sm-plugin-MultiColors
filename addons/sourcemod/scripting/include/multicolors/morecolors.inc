@@ -1065,9 +1065,6 @@ stock void MC_FastReplaceString(char[] text, int maxlen, const char[] search, co
 		return;
 
 	int searchLen = strlen(search);
-	if (searchLen == 0)
-		return;
-
 	int textLen = strlen(text);
 	if (textLen == 0)
 		return;
