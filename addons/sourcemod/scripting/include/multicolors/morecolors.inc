@@ -1006,6 +1006,16 @@ stock void MC_InitFastColors() {
 	MC_FastSetColor("yellowgreen", "\x079ACD32");
 }
 
+/**
+ * Computes FNV-1a (Fowler-Noll-Vo) hash for a string
+ * FNV-1a provides better avalanche characteristics than FNV-1
+ * and is widely used in hash tables for its speed and distribution quality
+ * 2166136261 is the FNV-1a 32-bit offset basis
+ * 16777619 is the FNV-1a 32-bit prime multiplier
+ *
+ * @param str    String to hash
+ * @return       32-bit hash value
+ */
 stock int MC_FastHash(const char[] str) {
 	int hash = 2166136261;
 	for (int i = 0; str[i]; i++) {
@@ -1064,12 +1074,10 @@ stock void MC_FastReplaceString(char[] text, int maxlen, const char[] search, co
 	if (!search[0] || !text[0])
 		return;
 
-	int searchLen = strlen(search);
-	int textLen = strlen(text);
-	if (textLen == 0)
-		return;
-
 	char localBuffer[MAX_BUFFER_LENGTH];
+
+	int textLen = strlen(text);
+	int searchLen = strlen(search);
 	int replaceLen = strlen(replace);
 	int tempPos = 0;
 	int i = 0;
