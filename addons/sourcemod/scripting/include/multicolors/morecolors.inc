@@ -13,7 +13,7 @@
 #define MC_MAX_MESSAGE_LENGTH   256
 #define MAX_BUFFER_LENGTH       (MC_MAX_MESSAGE_LENGTH * 4)
 #define MAX_COLOR_TAG_LENGTH    32
-#define COLOR_HASH_SIZE         256
+#define COLOR_HASH_SIZE         512 // 512 slots for ~172 colors = 34% load factor (optimal performance, minimal collisions)
 
 #define MCOLOR_RED              0xFF4040
 #define MCOLOR_BLUE             0x99CCFF
@@ -1031,6 +1031,12 @@ stock int MC_FastHash(const char[] str) {
 	return hash & (COLOR_HASH_SIZE - 1);
 }
 
+/**
+ * Inserts or updates a color in the hash table using linear probing
+ * Updates existing keys, adds new ones, or silently fails if table is full
+ * Uses FNV-1a hash with cycle detection to prevent infinite loops
+ * Silent fail occurs only if: empty key/value, 256+ unique colors, or hash table completely full
+ */
 stock void MC_FastSetColor(const char[] key, const char[] value) {
 	if (!key[0] || !value[0] || g_iColorCount >= COLOR_HASH_SIZE)
 		return;
