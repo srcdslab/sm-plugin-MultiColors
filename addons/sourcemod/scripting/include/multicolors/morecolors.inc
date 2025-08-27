@@ -15,6 +15,11 @@
 #define MAX_COLOR_TAG_LENGTH    32
 #define COLOR_HASH_SIZE         256
 
+#define MCOLOR_RED              0xFF4040
+#define MCOLOR_BLUE             0x99CCFF
+#define MCOLOR_GRAY             0xCCCCCC
+#define MCOLOR_GREEN            0x3EFF3E
+
 #define MC_GAME_DODS           0
 
 bool MC_SkipList[MAXPLAYERS+1];
@@ -798,7 +803,7 @@ stock bool CColorExists(const char[] color) {
  * @return				Client's team color in hexadecimal, or green if unknown
  * On error/Errors:		If the client index passed is invalid or not in game.
  */
-stock bool CGetTeamColor(int client, char[] value, int size) {
+stock int CGetTeamColor(int client) {
 	if (client <= 0 || client > MaxClients) {
 		ThrowError("Invalid client index %i", client);
 	}
@@ -809,22 +814,23 @@ stock bool CGetTeamColor(int client, char[] value, int size) {
 
 	MC_InitFastColors();
 
+	int value;
 	switch(GetClientTeam(client)) {
 		case 1: {
-			MC_FastGetColor("gray", value, size);
+			value = MCOLOR_GRAY;
 		}
 		case 2: {
-			MC_FastGetColor("red", value, size);
+			value = MCOLOR_RED;
 		}
 		case 3: {
-			MC_FastGetColor("blue", value, size);
+			value = MCOLOR_BLUE;
 		}
 		default: {
-			MC_FastGetColor("green", value, size);
+			value = MCOLOR_GREEN;
 		}
 	}
 
-	return true;
+	return value;
 }
 
 stock void MC_InitFastColors() {
