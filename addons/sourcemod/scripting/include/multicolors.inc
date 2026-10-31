@@ -3,7 +3,7 @@
 #endif
 #define _multicolors_included
 
-#define MuCo_VERSION "2.2.0"
+#define MuCo_VERSION "2.2.1"
 
 #include "multicolors/morecolors"
 #include "multicolors/colors"
@@ -392,19 +392,101 @@ stock void CShowActivityEx(int author, const char[] tag, const char[] message, a
  * @error
  */
  stock void CShowActivity2(int author, const char[] tag, const char[] message, any ...) {
-	char buffer[MAX_MESSAGE_LENGTH];
-	SetGlobalTransTarget(LANG_SERVER);
-	VFormat(buffer, sizeof(buffer), message, 4);
-
 	if (!g_bCFixColors) {
 		CFixColors();
 	}
 
-	if (!IsSource2009()) {
-		C_ShowActivity2(author, tag, "%s", buffer);
+	/* Same as C_ShowActivity2()/MC_ShowActivity2(), but the message is formatted here for each
+	 * recipient: the varargs can't be passed on, and formatting them once would show every
+	 * translated ("%t") message in the server language. */
+	bool bMoreColors = IsSource2009();
+	ConVar cvShowActivity = FindConVar("sm_show_activity");
+	int value = cvShowActivity != null ? cvShowActivity.IntValue : 0;
+
+	char szTag[MAX_MESSAGE_LENGTH];
+	strcopy(szTag, sizeof(szTag), tag);
+	MC_RemoveTags(szTag, sizeof(szTag));
+
+	char szBuffer[MAX_MESSAGE_LENGTH];
+	char name[MAX_NAME_LENGTH] = "Console";
+	char sign[MAX_NAME_LENGTH] = "ADMIN";
+
+	if (author != 0) {
+		if (author < 0 || author > MaxClients || !IsClientConnected(author)) {
+			ThrowError("Client index %d is invalid", author);
+		}
+
+		GetClientName(author, name, sizeof(name));
+
+		AdminId id = GetUserAdmin(author);
+		if (id == INVALID_ADMIN_ID || !id.HasFlag(Admin_Generic, Access_Effective)) {
+			sign = "PLAYER";
+		}
+
+		SetGlobalTransTarget(author);
+		VFormat(szBuffer, sizeof(szBuffer), message, 4);
+
+		/* We don't display directly to the console because the chat text
+		 * simply gets added to the console, so we don't want it to print
+		 * twice.
+		 */
+		if (bMoreColors) {
+			MC_PrintToChatEx(author, author, "%s%s", szTag, szBuffer);
+		}
+		else {
+			C_PrintToChatEx(author, author, "%s%s", szTag, szBuffer);
+		}
 	}
 	else {
-		MC_ShowActivity2(author, tag, "%s", buffer);
+		SetGlobalTransTarget(LANG_SERVER);
+		VFormat(szBuffer, sizeof(szBuffer), message, 4);
+
+		if (bMoreColors) {
+			MC_RemoveTags(szBuffer, sizeof(szBuffer));
+		}
+		else {
+			C_RemoveTags(szBuffer, sizeof(szBuffer));
+		}
+		PrintToServer("%s%s", szTag, szBuffer);
+	}
+
+	if (!value) {
+		return;
+	}
+
+	for (int i = 1; i <= MaxClients; ++i) {
+		if (!IsClientInGame(i) || IsFakeClient(i) || i == author) {
+			continue;
+		}
+
+		AdminId id = GetUserAdmin(i);
+		bool bShow;
+		bool bShowName;
+		if (id == INVALID_ADMIN_ID || !id.HasFlag(Admin_Generic, Access_Effective)) {
+			/* Treat this as a normal user. */
+			bShow = ((value & 1) | (value & 2)) != 0;
+			bShowName = (value & 2) != 0;
+		}
+		else {
+			/* Treat this as an admin user */
+			bool is_root = id.HasFlag(Admin_Root, Access_Effective);
+			bShow = (value & 4) || (value & 8) || ((value & 16) && is_root);
+			bShowName = (value & 8) || ((value & 16) && is_root);
+		}
+
+		if (!bShow) {
+			continue;
+		}
+
+		SetGlobalTransTarget(i);
+		VFormat(szBuffer, sizeof(szBuffer), message, 4);
+
+		if (bMoreColors) {
+			MC_PrintToChatEx(i, author, "%s%s: %s", tag, bShowName ? name : sign, szBuffer);
+		}
+		else {
+			C_PrintToChatEx(i, author, "%s%s: %s", tag, bShowName ? name : sign, szBuffer);
+		}
 	}
 }
 
