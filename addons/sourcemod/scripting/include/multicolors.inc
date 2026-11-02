@@ -3,7 +3,7 @@
 #endif
 #define _multicolors_included
 
-#define MuCo_VERSION "2.2.0"
+#define MuCo_VERSION "2.2.1"
 
 #include "multicolors/morecolors"
 #include "multicolors/colors"
