@@ -3,6 +3,8 @@
 #include <sourcemod>
 #include <multicolors>
 
+#pragma newdecls required
+
 public Plugin myinfo = {
 	name = "Multi Colors Testing Suite",
 	author = "Bara",
